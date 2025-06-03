@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive CV - [Your Full Name]</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Visualization & Content Choices: 
+        - Report Info: Technical Skills List -> Goal: Compare/Inform -> Viz/Presentation: Horizontal Bar Chart (Chart.js) & Tag-based layout -> Interaction: Quick visual comparison of proficiency levels. -> Justification: More engaging and faster to parse than a simple text list, turning abstract skills into tangible data. -> Library: Chart.js.
+        - Report Info: Work Experience -> Goal: Show Change/Chronology -> Viz/Presentation: Vertical Timeline (HTML/CSS) -> Interaction: Click to expand/collapse details for each role. -> Justification: An intuitive way to present chronological data while keeping the UI clean. It allows users to drill down into details as needed. -> Library/Method: Vanilla JS, HTML, Tailwind CSS.
+        - Report Info: Other text sections (Summary, Education, Projects) -> Goal: Inform -> Viz/Presentation: Styled Cards & Text Blocks -> Interaction: None needed, focus on readability. -> Justification: Clear, standard, and responsive presentation for textual information. -> Library/Method: HTML, Tailwind CSS. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdfcfb;
+            color: #3f3f46;
+        }
+        .timeline-item-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .timeline-item-content.expanded {
+            max-height: 500px;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 400px;
+            max-height: 50vh;
+            width: 100%;
+            max-width: 800px;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <div class="flex min-h-screen">
+        <aside id="sidebar" class="bg-white/80 backdrop-blur-md w-64 p-8 fixed h-full shadow-lg hidden lg:block">
+            <div class="flex flex-col items-center mb-10">
+                <div class="w-24 h-24 bg-teal-600 rounded-full mb-4 flex items-center justify-center">
+                     <span class="text-4xl font-bold text-white">[FN]</span>
+                </div>
+                <h1 class="text-xl font-bold text-teal-800">[Your Full Name]</h1>
+                <p class="text-sm text-stone-500 text-center">Full Stack Developer</p>
+            </div>
+            <nav>
+                <ul class="space-y-4">
+                    <li><a href="#summary" class="nav-link text-stone-600 hover:text-teal-600 font-medium transition duration-300">Summary</a></li>
+                    <li><a href="#skills" class="nav-link text-stone-600 hover:text-teal-600 font-medium transition duration-300">Skills</a></li>
+                    <li><a href="#experience" class="nav-link text-stone-600 hover:text-teal-600 font-medium transition duration-300">Experience</a></li>
+                    <li><a href="#projects" class="nav-link text-stone-600 hover:text-teal-600 font-medium transition duration-300">Projects</a></li>
+                    <li><a href="#education" class="nav-link text-stone-600 hover:text-teal-600 font-medium transition duration-300">Education</a></li>
+                    <li><a href="#contact" class="nav-link text-stone-600 hover:text-teal-600 font-medium transition duration-300">Contact</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <button id="menu-toggle" class="lg:hidden fixed top-4 right-4 z-20 p-2 bg-white rounded-md shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+        </button>
+
+        <main class="lg:ml-64 w-full p-4 sm:p-8 md:p-12">
+            <section id="summary" class="min-h-screen flex items-center">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-200/50">
+                    <h2 class="text-3xl font-bold text-teal-700 mb-6">Professional Summary</h2>
+                    <p class="text-lg leading-relaxed text-stone-600">
+                        This section provides a concise overview of my professional background. Here, I'll summarize my experience as a Full Stack Developer, highlighting my core expertise across .NET and Python/Django ecosystems, proficiency with modern front-end frameworks like React, and strong capabilities with a diverse range of databases including SQL and NoSQL solutions. I also touch upon my understanding of robust project architecture, modern deployment strategies, and server maintenance across both Windows and Linux environments, including major cloud platforms.
+                    </p>
+                    <p class="mt-4 text-lg leading-relaxed text-stone-600">
+                        *(Write a concise paragraph here, 3-5 sentences, summarizing your experience as a Full Stack Developer. Highlight your expertise across .NET, Python/Django, and modern front-end technologies (HTML, CSS, JavaScript, React JS). Mention your strong backend capabilities with various databases (MS SQL Server, MariaDB, PostgreSQL, MongoDB), your understanding of project architecture, development platforms, deployment strategies, and server maintenance on both Windows and Linux environments (AWS, Azure). Emphasize your ability to deliver robust and scalable solutions.)*
+                    </p>
+                </div>
+            </section>
+
+            <section id="skills" class="min-h-screen flex flex-col justify-center">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-200/50">
+                    <h2 class="text-3xl font-bold text-teal-700 mb-6">Technical Skills</h2>
+                    <p class="text-lg leading-relaxed text-stone-600 mb-8">
+                        This section provides a visual overview of my technical capabilities, categorized by area of expertise. The interactive chart visualizes my self-assessed proficiency, offering a quick look at my core strengths. Below the chart, skills are grouped into their respective domains for a more detailed, at-a-glance reference.
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                    <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="skill-category">
+                            <h3 class="text-xl font-semibold mb-3 text-teal-800">Backend Technologies</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-teal-100 text-teal-800 text-sm font-medium px-3 py-1 rounded-full">.NET (Core, MVC)</span>
+                                <span class="bg-teal-100 text-teal-800 text-sm font-medium px-3 py-1 rounded-full">Entity Framework</span>
+                                <span class="bg-teal-100 text-teal-800 text-sm font-medium px-3 py-1 rounded-full">Django</span>
+                                <span class="bg-teal-100 text-teal-800 text-sm font-medium px-3 py-1 rounded-full">C#</span>
+                                <span class="bg-teal-100 text-teal-800 text-sm font-medium px-3 py-1 rounded-full">Python</span>
+                            </div>
+                        </div>
+                        <div class="skill-category">
+                            <h3 class="text-xl font-semibold mb-3 text-teal-800">Frontend Technologies</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">React JS</span>
+                                <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">JavaScript</span>
+                                <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">HTML</span>
+                                <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">CSS</span>
+                                <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">Tailwind CSS</span>
+                            </div>
+                        </div>
+                        <div class="skill-category">
+                            <h3 class="text-xl font-semibold mb-3 text-teal-800">Databases</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">MS SQL Server</span>
+                                <span class="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">PostgreSQL</span>
+                                <span class="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">MariaDB</span>
+                                <span class="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">MongoDB</span>
+                            </div>
+                        </div>
+                        <div class="skill-category">
+                            <h3 class="text-xl font-semibold mb-3 text-teal-800">Cloud & DevOps</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-amber-100 text-amber-800 text-sm font-medium px-3 py-1 rounded-full">AWS</span>
+                                <span class="bg-amber-100 text-amber-800 text-sm font-medium px-3 py-1 rounded-full">Azure</span>
+                                <span class="bg-amber-100 text-amber-800 text-sm font-medium px-3 py-1 rounded-full">Docker</span>
+                                <span class="bg-amber-100 text-amber-800 text-sm font-medium px-3 py-1 rounded-full">CI/CD</span>
+                                <span class="bg-amber-100 text-amber-800 text-sm font-medium px-3 py-1 rounded-full">Git</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="experience" class="min-h-screen flex flex-col justify-center">
+                 <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-200/50">
+                    <h2 class="text-3xl font-bold text-teal-700 mb-6">Work Experience</h2>
+                     <p class="text-lg leading-relaxed text-stone-600 mb-12">
+                        My professional journey is presented here as an interactive timeline. Each entry represents a role I've held, providing a high-level overview of the company and duration. Click on any title to expand the entry and view a detailed breakdown of my key responsibilities and accomplishments in that position.
+                    </p>
+                    <div class="relative border-l-2 border-teal-200">
+                        <div class="timeline-item mb-12">
+                            <div class="absolute w-4 h-4 bg-teal-600 rounded-full -left-2 mt-1.5 border-2 border-white"></div>
+                            <div class="ml-8">
+                                <h3 class="timeline-title text-xl font-semibold text-stone-800 cursor-pointer">[Job Title] at [Company Name]</h3>
+                                <p class="text-sm text-stone-500 mb-3">[Start Date] – [End Date]</p>
+                                <div class="timeline-item-content">
+                                    <ul class="list-disc list-inside text-stone-600 space-y-2 mt-2">
+                                        <li>Developed and maintained full-stack applications using [mention specific .NET technologies, e.g., ASP.NET Core, C#] and [mention specific front-end technologies, e.g., React JS, JavaScript].</li>
+                                        <li>Designed, developed, and optimized backend services with [mention specific Python/Django frameworks, e.g., Django] for scalable web solutions.</li>
+                                        <li>Managed and interacted with various database systems including [MS SQL Server, MariaDB, PostgreSQL, MongoDB] for data storage, retrieval, and performance tuning.</li>
+                                        <li>Contributed to the design and implementation of project architectures, ensuring scalability, reliability, and maintainability.</li>
+                                        <li>Involved in the deployment process, utilizing CI/CD pipelines and tools like [mention specific tools, e.g., Docker] on [Windows/Linux Servers].</li>
+                                        <li>*(Add more bullet points describing your key responsibilities and quantifiable achievements for this role. Use strong action verbs.)*</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                             <div class="absolute w-4 h-4 bg-teal-600 rounded-full -left-2 mt-1.5 border-2 border-white"></div>
+                            <div class="ml-8">
+                                <h3 class="timeline-title text-xl font-semibold text-stone-800 cursor-pointer">[Previous Job Title] at [Previous Company]</h3>
+                                <p class="text-sm text-stone-500 mb-3">[Start Date] – [End Date]</p>
+                                <div class="timeline-item-content">
+                                     <ul class="list-disc list-inside text-stone-600 space-y-2 mt-2">
+                                        <li>*(Repeat the format above, detailing your responsibilities and achievements for this role.)*</li>
+                                        <li>*(Focus on relevant skills and technologies as listed in your technical skills section.)*</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="projects" class="min-h-screen flex items-center">
+                 <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-200/50 w-full">
+                    <h2 class="text-3xl font-bold text-teal-700 mb-6">Projects</h2>
+                     <p class="text-lg leading-relaxed text-stone-600 mb-8">
+                        Beyond my professional roles, I enjoy building projects to explore new technologies and solve interesting problems. This section showcases some of my significant work. Each card provides a brief description, outlines the technologies used, and includes a link to the project where applicable.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="border border-stone-200/80 p-6 rounded-lg hover:shadow-md transition duration-300">
+                            <h3 class="font-semibold text-xl mb-2 text-stone-800">[Project Name]</h3>
+                            <p class="text-stone-600 mb-4">[Brief description of the project and your role.]</p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="bg-stone-100 text-stone-700 text-xs font-medium px-2.5 py-1 rounded-full">[Tech 1]</span>
+                                <span class="bg-stone-100 text-stone-700 text-xs font-medium px-2.5 py-1 rounded-full">[Tech 2]</span>
+                                <span class="bg-stone-100 text-stone-700 text-xs font-medium px-2.5 py-1 rounded-full">[Tech 3]</span>
+                            </div>
+                            <a href="#" class="text-teal-600 hover:text-teal-800 font-medium">View Project →</a>
+                        </div>
+                        <div class="border border-stone-200/80 p-6 rounded-lg hover:shadow-md transition duration-300">
+                             <h3 class="font-semibold text-xl mb-2 text-stone-800">[Another Project Name]</h3>
+                            <p class="text-stone-600 mb-4">[Brief description of the project and your role.]</p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="bg-stone-100 text-stone-700 text-xs font-medium px-2.5 py-1 rounded-full">[Tech A]</span>
+                                <span class="bg-stone-100 text-stone-700 text-xs font-medium px-2.5 py-1 rounded-full">[Tech B]</span>
+                            </div>
+                            <a href="#" class="text-teal-600 hover:text-teal-800 font-medium">View Project →</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="education" class="min-h-screen flex items-center">
+                 <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-200/50 w-full">
+                    <h2 class="text-3xl font-bold text-teal-700 mb-6">Education & Certifications</h2>
+                     <p class="text-lg leading-relaxed text-stone-600 mb-8">
+                        My formal education and continuous learning through certifications form the foundation of my technical expertise. This section details my academic background and professional credentials.
+                    </p>
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="font-semibold text-xl text-stone-800">[Your Degree (e.g., Bachelor of Technology in Computer Science)]</h3>
+                            <p class="text-stone-600">[Your University/College Name], [City, State/Country]</p>
+                            <p class="text-sm text-stone-500">[Graduation Date]</p>
+                        </div>
+                        <div class="pt-6 border-t border-stone-200">
+                             <h3 class="font-semibold text-xl text-stone-800">[Certification Name]</h3>
+                            <p class="text-stone-600">[Issuing Body]</p>
+                            <p class="text-sm text-stone-500">[Year Obtained]</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer id="contact" class="text-center py-12">
+                <h2 class="text-3xl font-bold text-teal-700 mb-4">Get In Touch</h2>
+                <p class="text-stone-600 mb-6">[Your Email Address] | [Your Phone Number]</p>
+                <div class="flex justify-center space-x-4">
+                    <a href="#" class="text-stone-500 hover:text-teal-600">[LinkedIn Profile URL]</a>
+                    <a href="#" class="text-stone-500 hover:text-teal-600">[GitHub/Portfolio URL]</a>
+                </div>
+                 <p class="text-sm text-stone-400 mt-8">© 2024 [Your Full Name]. All Rights Reserved.</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const skillsData = {
+                labels: ['C# & .NET', 'Python & Django', 'React JS', 'JS/HTML/CSS', 'SQL Databases', 'NoSQL Databases', 'Cloud (AWS/Azure)'],
+                datasets: [{
+                    label: 'Self-Assessed Proficiency',
+                    data: [90, 85, 88, 95, 85, 75, 80],
+                    backgroundColor: 'rgba(13, 148, 136, 0.6)',
+                    borderColor: 'rgba(15, 118, 110, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                }]
+            };
+
+            const config = {
+                type: 'bar',
+                data: skillsData,
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#3f3f46',
+                            bodyColor: '#3f3f46',
+                            borderColor: '#e5e7eb',
+                            borderWidth: 1,
+                            padding: 10,
+                            cornerRadius: 6,
+                        },
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: '#f3f4f6',
+                            },
+                            ticks: {
+                                color: '#57534e',
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#57534e',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            
+            const skillsChartCtx = document.getElementById('skillsChart').getContext('2d');
+            new Chart(skillsChartCtx, config);
+
+            const timelineTitles = document.querySelectorAll('.timeline-title');
+            timelineTitles.forEach(title => {
+                title.addEventListener('click', () => {
+                    const content = title.nextElementSibling.nextElementSibling;
+                    content.classList.toggle('expanded');
+                });
+            });
+
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const toggleSidebar = () => {
+                sidebar.classList.toggle('hidden');
+                sidebar.classList.toggle('block');
+            };
+
+            menuToggle.addEventListener('click', toggleSidebar);
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (window.innerWidth < 1024) {
+                        toggleSidebar();
+                    }
+                    const targetId = e.target.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        e.preventDefault();
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
