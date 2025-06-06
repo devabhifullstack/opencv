@@ -3,29 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive CV - [Your Full Name]</title>
+    <title>CV - Abhirup Bhattacharyya</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Visualization & Content Choices: 
-        - Report Info: Technical Skills List -> Goal: Compare/Inform -> Viz/Presentation: Horizontal Bar Chart (Chart.js) & Tag-based layout -> Interaction: Quick visual comparison of proficiency levels. -> Justification: More engaging and faster to parse than a simple text list, turning abstract skills into tangible data. -> Library: Chart.js.
-        - Report Info: Work Experience -> Goal: Show Change/Chronology -> Viz/Presentation: Vertical Timeline (HTML/CSS) -> Interaction: Click to expand/collapse details for each role. -> Justification: An intuitive way to present chronological data while keeping the UI clean. It allows users to drill down into details as needed. -> Library/Method: Vanilla JS, HTML, Tailwind CSS.
-        - Report Info: Other text sections (Summary, Education, Projects) -> Goal: Inform -> Viz/Presentation: Styled Cards & Text Blocks -> Interaction: None needed, focus on readability. -> Justification: Clear, standard, and responsive presentation for textual information. -> Library/Method: HTML, Tailwind CSS. -->
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #fdfcfb;
-            color: #3f3f46;
+            background-color: #ffffff; /* White background for screen */
+            color: #000000; /* Black text for screen */
+            margin: 0;
+            padding: 0;
         }
+        /* Ensure all text is black by default, and backgrounds are white */
+        h1, h2, h3, h4, p, ul, li, a, span {
+            color: #000000 !important; /* Force black for all text */
+        }
+        .bg-stone-50, .bg-white\/80, .bg-white {
+            background-color: #ffffff !important; /* Force white background for all main elements */
+        }
+        /* Specific elements that had color and now should be white/black */
+        .shadow-lg, .shadow-sm, .border-stone-200\/50, .border-stone-200 {
+            box-shadow: none !important; /* Remove shadows for cleaner look */
+            border-color: #cccccc !important; /* Light grey border for separation */
+        }
+        .rounded-full, .rounded-2xl, .rounded-lg {
+            border-radius: 0 !important; /* Remove rounded corners for a more traditional CV look */
+        }
+
+        /* Interactive elements' specific screen styles (will be overridden by print) */
         .timeline-item-content {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         .timeline-item-content.expanded {
-            max-height: 500px;
+            max-height: 500px; /* Adjust as needed for content */
         }
         .chart-container {
             position: relative;
@@ -35,212 +52,467 @@
             width: 100%;
             max-width: 800px;
         }
+
+        /* Tailwind custom overrides for Material Icons alignment */
+        .material-icons {
+            vertical-align: middle;
+            margin-right: 0.25em; /* Small space between icon and text */
+            font-size: 1.2em; /* Adjust icon size relative to text */
+        }
+        
+        /* --- Styles for Print (PDF) --- */
+        @media print {
+            body {
+                background-color: #fff !important;
+                color: #000 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                margin: 0;
+                padding: 0;
+            }
+
+            /* Hide elements not needed in print */
+            aside, #menu-toggle {
+                display: none !important;
+            }
+
+            /* Adjust main content for full width */
+            main {
+                margin-left: 0 !important;
+                width: 100% !important;
+                padding: 1.5cm !important; /* Add padding for print margins */
+                box-sizing: border-box;
+            }
+
+            /* Remove shadows, borders and background colors from cards/sections for a cleaner look */
+            .bg-white, .shadow-sm, .border, .rounded-2xl, .rounded-lg, .bg-stone-50 {
+                background-color: transparent !important;
+                box-shadow: none !important;
+                border: none !important;
+                border-radius: 0 !important;
+            }
+
+            /* Ensure all timeline content is visible on print */
+            .timeline-item-content {
+                max-height: fit-content !important;
+                overflow: visible !important;
+                transition: none !important;
+            }
+
+            /* Adjust chart for print - may need to render as image if complex interactions are crucial */
+            .chart-container {
+                height: 300px !important; /* Fixed height for print */
+                max-height: 300px !important;
+            }
+
+            /* Headings and text adjustments for print */
+            h1, h2, h3, h4 {
+                color: #000 !important; /* Ensure black headings */
+                margin-top: 1em;
+                margin-bottom: 0.5em;
+            }
+            p, ul, li {
+                font-size: 0.95em;
+                line-height: 1.4;
+            }
+            
+            /* Remove hover effects for print */
+            a {
+                color: inherit !important;
+                text-decoration: none !important;
+            }
+
+            /* Footer adjustments */
+            footer {
+                text-align: left !important;
+                margin-top: 1cm !important; /* Reduced margin to fit content */
+                padding-top: 0.5cm !important;
+                border-top: 1px solid #eee;
+                font-size: 0.85em;
+            }
+            footer .flex {
+                justify-content: flex-start !important;
+            }
+
+            /* Page break suggestions for 3-page limit */
+            section {
+                padding-top: 1cm;
+                padding-bottom: 1cm;
+                break-before: auto;
+                break-after: auto;
+                page-break-inside: avoid; /* Keep sections on one page if possible */
+            }
+
+            /* Manual page breaks based on content flow */
+            #summary {
+                page-break-after: avoid; /* Keep summary with initial content */
+            }
+            #skills {
+                page-break-before: always; /* Start skills on a new page */
+            }
+            /* You might need to adjust page-break-before/after for experience, projects, education 
+               based on your actual content length to hit the 3-page target. */
+            #experience {
+                page-break-before: auto; 
+            }
+            #projects {
+                 page-break-before: auto; /* Could be 'always' if projects are long */
+            }
+            #education {
+                page-break-before: auto; /* Could be 'always' if education is long or to separate from projects */
+            }
+
+            /* Remove min-height for print */
+            .{
+                min-height: auto !important;
+            }
+            .flex.items-center, .flex.flex-col.justify-center {
+                display: block !important;
+            }
+
+            /* For the timeline line, ensure it's visible */
+            .relative.border-l-2 {
+                border-left: 2px solid #ccc !important; /* Light grey line */
+            }
+            .absolute.w-4.h-4 {
+                background-color: #000 !important; /* Black dot */
+                border-color: #fff !important; /* White border for dot */
+            }
+
+            /* Ensure colored skill tags become black on white for print */
+            .bg-teal-100, .text-teal-800, .bg-sky-100, .text-sky-800,
+            .bg-indigo-100, .text-indigo-800, .bg-amber-100, .text-amber-800 {
+                background-color: transparent !important;
+                color: #000 !important;
+                border: 1px solid #ccc; /* Add a light border to distinguish tags */
+            }
+            .bg-stone-100, .text-stone-700 { /* Project tags */
+                 background-color: transparent !important;
+                color: #000 !important;
+                border: 1px solid #ccc;
+            }
+        }
     </style>
 </head>
-<body class="bg-stone-50 text-stone-800">
+<body class="bg-white text-black">
 
     <div class="flex min-h-screen">
-        <aside id="sidebar" class="bg-white/80 backdrop-blur-md w-64 p-8 fixed h-full shadow-lg hidden lg:block">
+        <!-- Sidebar - Hidden for Print -->
+        <aside id="sidebar" class="bg-white w-64 p-8 fixed h-full shadow-lg hidden lg:block print:hidden">
             <div class="flex flex-col items-center mb-10">
-                <div class="w-24 h-24 bg-teal-600 rounded-full mb-4 flex items-center justify-center">
-                     <span class="text-4xl font-bold text-white">[FN]</span>
+                <div class="w-24 h-24 bg-gray-200 rounded-full mb-4 flex items-center justify-center">
+                    <!-- Placeholder image - consider a professional photo for print -->
+                    <img src="https://via.placeholder.com/100/eeeeee/000000?text=AB" alt="Profile Picture" class="rounded-full">
                 </div>
-                <h1 class="text-xl font-bold text-teal-800">Abhirup Bhattacharyya</h1>
-                <p class="text-sm text-stone-500 text-center">Full Stack Developer</p>
+                <h1 class="text-xl font-bold text-black">Abhirup Bhattacharyya</h1>
+                <p class="text-sm text-gray-700 text-center">Solution Architect | Full Stack Developer |Blockchain Practice</p>
             </div>
             <nav>
                 <ul class="space-y-4">
-                    <li><a href="#summary" class="nav-link text-stone-600 hover:text-teal-600 font-medium transition duration-300">Summary</a></li>
-                    <li><a href="#skills" class="nav-link text-stone-600 hover:text-teal-600 font-medium transition duration-300">Skills</a></li>
-                    <li><a href="#experience" class="nav-link text-stone-600 hover:text-teal-600 font-medium transition duration-300">Experience</a></li>
-                    <li><a href="#projects" class="nav-link text-stone-600 hover:text-teal-600 font-medium transition duration-300">Projects</a></li>
-                    <li><a href="#education" class="nav-link text-stone-600 hover:text-teal-600 font-medium transition duration-300">Education</a></li>
-                    <li><a href="#contact" class="nav-link text-stone-600 hover:text-teal-600 font-medium transition duration-300">Contact</a></li>
+                    <li><a href="#summary" class="nav-link text-black hover:text-gray-700 font-medium transition duration-300"><span class="material-icons">article</span>Summary</a></li>
+                    <li><a href="#skills" class="nav-link text-black hover:text-gray-700 font-medium transition duration-300"><span class="material-icons">code</span>Skills</a></li>
+                    <li><a href="#experience" class="nav-link text-black hover:text-gray-700 font-medium transition duration-300"><span class="material-icons">work</span>Experience</a></li>
+                    <li><a href="#projects" class="nav-link text-black hover:text-gray-700 font-medium transition duration-300"><span class="material-icons">folder_open</span>Projects</a></li>
+                    <li><a href="#education" class="nav-link text-black hover:text-gray-700 font-medium transition duration-300"><span class="material-icons">school</span>Education</a></li>
+                    <li><a href="#contact" class="nav-link text-black hover:text-gray-700 font-medium transition duration-300"><span class="material-icons">contact_mail</span>Contact</a></li>
                 </ul>
             </nav>
         </aside>
         
-        <button id="menu-toggle" class="lg:hidden fixed top-4 right-4 z-20 p-2 bg-white rounded-md shadow-md">
+        <!-- Menu Toggle Button - Hidden for Print -->
+        <button id="menu-toggle" class="lg:hidden fixed top-4 right-4 z-20 p-2 bg-white rounded-md shadow-md print:hidden">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
         </button>
 
-        <main class="lg:ml-64 w-full p-4 sm:p-8 md:p-12">
-            <section id="summary" class="min-h-screen flex items-center">
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-200/50">
-                    <h2 class="text-3xl font-bold text-teal-700 mb-6">Professional Summary</h2>
-                    <p class="text-lg leading-relaxed text-stone-600">
+        <main class="lg:ml-64 w-full p-4 sm:p-8 md:p-12 bg-white">
+            <header class="text-center mb-2">
+                <h1 class="text-4xl font-bold text-black mb-2">Abhirup Bhattacharyya</h1>
+                <p class="text-lg text-gray-700">Full Stack Developer</p>
+                <p class="text-sm text-gray-600 mt-2"><span class="material-icons text-base">location_on</span>Kolkata, West Bengal, India</p>
+            </header>
+            
+            <section id="summary" class="flex items-center print:block">
+                <div class="bg-white p-8 border border-gray-300 w-full">
+                    <h2 class="text-3xl font-bold text-black mb-6"><span class="material-icons">article</span>Professional Summary</h2>
+                    <p class="text-lg leading-relaxed text-gray-800">
                         This section provides a concise overview of my professional background. Here, I'll summarize my experience as a Full Stack Developer, highlighting my core expertise across .NET and Python/Django ecosystems, proficiency with modern front-end frameworks like React, and strong capabilities with a diverse range of databases including SQL and NoSQL solutions. I also touch upon my understanding of robust project architecture, modern deployment strategies, and server maintenance across both Windows and Linux environments, including major cloud platforms.
                     </p>
-                    <p class="mt-4 text-lg leading-relaxed text-stone-600">
-                        *(Write a concise paragraph here, 3-5 sentences, summarizing your experience as a Full Stack Developer. Highlight your expertise across .NET, Python/Django, and modern front-end technologies (HTML, CSS, JavaScript, React JS). Mention your strong backend capabilities with various databases (MS SQL Server, MariaDB, PostgreSQL, MongoDB), your understanding of project architecture, development platforms, deployment strategies, and server maintenance on both Windows and Linux environments (AWS, Azure). Emphasize your ability to deliver robust and scalable solutions.)*
+                    <p class="mt-4 text-lg leading-relaxed text-gray-800">
+                        <!-- Add more summary content here if needed -->
                     </p>
                 </div>
             </section>
 
-            <section id="skills" class="min-h-screen flex flex-col justify-center">
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-200/50">
-                    <h2 class="text-3xl font-bold text-teal-700 mb-6">Technical Skills</h2>
-                    <p class="text-lg leading-relaxed text-stone-600 mb-8">
-                        This section provides a visual overview of my technical capabilities, categorized by area of expertise. The interactive chart visualizes my self-assessed proficiency, offering a quick look at my core strengths. Below the chart, skills are grouped into their respective domains for a more detailed, at-a-glance reference.
+            <section id="skills" class="flex flex-col justify-center print:block">
+                <div class="bg-white p-8 border border-gray-300 w-full">
+                    <h2 class="text-3xl font-bold text-black mb-6"><span class="material-icons">code</span>Technical Skills</h2>
+                   <!-- <p class="text-lg leading-relaxed text-gray-800 mb-8">
+                        This section provides a visual overview of my technical capabilities, categorized by area of expertise. The chart visualizes my self-assessed proficiency, offering a quick look at my core strengths. Below the chart, skills are grouped into their respective domains for a more detailed, at-a-glance reference.
                     </p>
                     <div class="chart-container">
                         <canvas id="skillsChart"></canvas>
-                    </div>
+                    </div>-->
                     <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <div class="skill-category">
-                            <h3 class="text-xl font-semibold mb-3 text-teal-800">Backend Technologies</h3>
+                            <h3 class="text-xl font-semibold mb-3 text-black">Backend Technologies</h3>
                             <div class="flex flex-wrap gap-2">
-                                <span class="bg-teal-100 text-teal-800 text-sm font-medium px-3 py-1 rounded-full">.NET (Core, MVC)</span>
-                                <span class="bg-teal-100 text-teal-800 text-sm font-medium px-3 py-1 rounded-full">Entity Framework</span>
-                                <span class="bg-teal-100 text-teal-800 text-sm font-medium px-3 py-1 rounded-full">Django</span>
-                                <span class="bg-teal-100 text-teal-800 text-sm font-medium px-3 py-1 rounded-full">C#</span>
-                                <span class="bg-teal-100 text-teal-800 text-sm font-medium px-3 py-1 rounded-full">Python</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">.NET (Core, MVC,Framework)</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">Django</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">C#</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">Python</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">AWS Lambda</span>
                             </div>
                         </div>
                         <div class="skill-category">
-                            <h3 class="text-xl font-semibold mb-3 text-teal-800">Frontend Technologies</h3>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">React JS</span>
-                                <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">JavaScript</span>
-                                <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">HTML</span>
-                                <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">CSS</span>
-                                <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">Tailwind CSS</span>
+                            <h3 class="text-xl font-semibold mb-3 text-black">Frontend Technologies</h3>
+                            <div class="flex flex-wrap gap-2">              
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">JavaScript</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">Bootstrap</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">HTML</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">CSS</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">React JS</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">Tailwind CSS</span>
                             </div>
                         </div>
                         <div class="skill-category">
-                            <h3 class="text-xl font-semibold mb-3 text-teal-800">Databases</h3>
+                            <h3 class="text-xl font-semibold mb-3 text-black">Databases</h3>
                             <div class="flex flex-wrap gap-2">
-                                <span class="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">MS SQL Server</span>
-                                <span class="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">PostgreSQL</span>
-                                <span class="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">MariaDB</span>
-                                <span class="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">MongoDB</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">MS SQL Server</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">MS Access</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">PostgreSQL</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">MariaDB</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">MongoDB</span>
                             </div>
                         </div>
                         <div class="skill-category">
-                            <h3 class="text-xl font-semibold mb-3 text-teal-800">Cloud & DevOps</h3>
+                            <h3 class="text-xl font-semibold mb-3 text-black">Cloud & DevOps</h3>
                             <div class="flex flex-wrap gap-2">
-                                <span class="bg-amber-100 text-amber-800 text-sm font-medium px-3 py-1 rounded-full">AWS</span>
-                                <span class="bg-amber-100 text-amber-800 text-sm font-medium px-3 py-1 rounded-full">Azure</span>
-                                <span class="bg-amber-100 text-amber-800 text-sm font-medium px-3 py-1 rounded-full">Docker</span>
-                                <span class="bg-amber-100 text-amber-800 text-sm font-medium px-3 py-1 rounded-full">CI/CD</span>
-                                <span class="bg-amber-100 text-amber-800 text-sm font-medium px-3 py-1 rounded-full">Git</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">AWS</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">Azure</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">Docker</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">CI/CD</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">Git</span>
+                            </div>
+                        </div>
+                         <div class="skill-category">
+                            <h3 class="text-xl font-semibold mb-3 text-black">Operating Systems</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">Linux</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">Windows</span>
+                               
+                            </div>
+                        </div>
+                        <div class="skill-category">
+                            <h3 class="text-xl font-semibold mb-3 text-black">Generative AI</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">Chatgpt</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">Copilot</span>
+                                <span class="bg-white text-black text-sm font-medium px-3 py-1 border border-gray-300">Gemini</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section id="experience" class="min-h-screen flex flex-col justify-center">
-                 <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-200/50">
-                    <h2 class="text-3xl font-bold text-teal-700 mb-6">Work Experience</h2>
-                     <p class="text-lg leading-relaxed text-stone-600 mb-12">
-                        My professional journey is presented here as an interactive timeline. Each entry represents a role I've held, providing a high-level overview of the company and duration. Click on any title to expand the entry and view a detailed breakdown of my key responsibilities and accomplishments in that position.
-                    </p>
-                    <div class="relative border-l-2 border-teal-200">
+            <section id="experience" class="flex flex-col justify-center print:block">
+                <div class="bg-white p-8 border border-gray-300 w-full">
+                    <h2 class="text-3xl font-bold text-black mb-6"><span class="material-icons">work</span>Work Experience</h2>
+                    <!--<p class="text-lg leading-relaxed text-gray-800 mb-12">
+                        My professional journey is presented here chronologically. Each entry details the company, my role, and the duration, followed by a comprehensive breakdown of my key responsibilities and accomplishments in that position.
+                    </p>-->
+                    <div class="relative border-l-2 border-gray-300">
                         <div class="timeline-item mb-12">
-                            <div class="absolute w-4 h-4 bg-teal-600 rounded-full -left-2 mt-1.5 border-2 border-white"></div>
+                            <div class="absolute w-4 h-4 bg-black rounded-full -left-2 mt-1.5 border-2 border-white"></div>
                             <div class="ml-8">
-                                <h3 class="timeline-title text-xl font-semibold text-stone-800 cursor-pointer">[Job Title] at [Company Name]</h3>
-                                <p class="text-sm text-stone-500 mb-3">[Start Date] – [End Date]</p>
-                                <div class="timeline-item-content">
-                                    <ul class="list-disc list-inside text-stone-600 space-y-2 mt-2">
-                                        <li>Developed and maintained full-stack applications using [mention specific .NET technologies, e.g., ASP.NET Core, C#] and [mention specific front-end technologies, e.g., React JS, JavaScript].</li>
-                                        <li>Designed, developed, and optimized backend services with [mention specific Python/Django frameworks, e.g., Django] for scalable web solutions.</li>
-                                        <li>Managed and interacted with various database systems including [MS SQL Server, MariaDB, PostgreSQL, MongoDB] for data storage, retrieval, and performance tuning.</li>
-                                        <li>Contributed to the design and implementation of project architectures, ensuring scalability, reliability, and maintainability.</li>
-                                        <li>Involved in the deployment process, utilizing CI/CD pipelines and tools like [mention specific tools, e.g., Docker] on [Windows/Linux Servers].</li>
-                                        <li>*(Add more bullet points describing your key responsibilities and quantifiable achievements for this role. Use strong action verbs.)*</li>
-                                    </ul>
-                                </div>
+                                <h3 class="timeline-title text-xl font-semibold text-black">Senior Consultant L2 at Arodek</h3>
+                                <p class="text-sm text-gray-700 mb-3">01-07-2024 – Present Day</p>
                             </div>
+                            <div class="ml-8">
+                                <h3 class="timeline-title text-xl font-semibold text-black">Senior Consultant L1 at Arodek</h3>
+                                <p class="text-sm text-gray-700 mb-3">09-01-2023 – 30-06-2024</p>
+                            </div>                           
                         </div>
 
                         <div class="timeline-item">
-                             <div class="absolute w-4 h-4 bg-teal-600 rounded-full -left-2 mt-1.5 border-2 border-white"></div>
+                            <div class="absolute w-4 h-4 bg-black rounded-full -left-2 mt-1.5 border-2 border-white"></div>
                             <div class="ml-8">
-                                <h3 class="timeline-title text-xl font-semibold text-stone-800 cursor-pointer">[Previous Job Title] at [Previous Company]</h3>
-                                <p class="text-sm text-stone-500 mb-3">[Start Date] – [End Date]</p>
-                                <div class="timeline-item-content">
-                                     <ul class="list-disc list-inside text-stone-600 space-y-2 mt-2">
-                                        <li>*(Repeat the format above, detailing your responsibilities and achievements for this role.)*</li>
-                                        <li>*(Focus on relevant skills and technologies as listed in your technical skills section.)*</li>
+                                <h3 class="timeline-title text-xl font-semibold text-black">Consultant at Infysofy india</h3>
+                                <p class="text-sm text-gray-700 mb-3">01-04-2013 – 08-01-2023</p>
+                                <div class="timeline-item-content expanded"> <!-- Ensure content is expanded for print -->
+                                    <ul class="list-disc list-inside text-gray-800 space-y-2 mt-2">
+                                        <li>**also Founder Member*</li>                                        
                                     </ul>
                                 </div>
                             </div>
                         </div>
+                        <!-- Add more work experience items as needed -->
                     </div>
                 </div>
-            </section>
+            </section>         
 
-            <section id="projects" class="min-h-screen flex items-center">
-                 <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-200/50 w-full">
-                    <h2 class="text-3xl font-bold text-teal-700 mb-6">Projects</h2>
-                     <p class="text-lg leading-relaxed text-stone-600 mb-8">
-                        Beyond my professional roles, I enjoy building projects to explore new technologies and solve interesting problems. This section showcases some of my significant work. Each card provides a brief description, outlines the technologies used, and includes a link to the project where applicable.
-                    </p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="border border-stone-200/80 p-6 rounded-lg hover:shadow-md transition duration-300">
-                            <h3 class="font-semibold text-xl mb-2 text-stone-800">[Project Name]</h3>
-                            <p class="text-stone-600 mb-4">[Brief description of the project and your role.]</p>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="bg-stone-100 text-stone-700 text-xs font-medium px-2.5 py-1 rounded-full">[Tech 1]</span>
-                                <span class="bg-stone-100 text-stone-700 text-xs font-medium px-2.5 py-1 rounded-full">[Tech 2]</span>
-                                <span class="bg-stone-100 text-stone-700 text-xs font-medium px-2.5 py-1 rounded-full">[Tech 3]</span>
-                            </div>
-                            <a href="#" class="text-teal-600 hover:text-teal-800 font-medium">View Project →</a>
-                        </div>
-                        <div class="border border-stone-200/80 p-6 rounded-lg hover:shadow-md transition duration-300">
-                             <h3 class="font-semibold text-xl mb-2 text-stone-800">[Another Project Name]</h3>
-                            <p class="text-stone-600 mb-4">[Brief description of the project and your role.]</p>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="bg-stone-100 text-stone-700 text-xs font-medium px-2.5 py-1 rounded-full">[Tech A]</span>
-                                <span class="bg-stone-100 text-stone-700 text-xs font-medium px-2.5 py-1 rounded-full">[Tech B]</span>
-                            </div>
-                            <a href="#" class="text-teal-600 hover:text-teal-800 font-medium">View Project →</a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="education" class="min-h-screen flex items-center">
-                 <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-200/50 w-full">
-                    <h2 class="text-3xl font-bold text-teal-700 mb-6">Education & Certifications</h2>
+            <section id="education" class="flex items-center print:block">
+                <div class="bg-white p-8 border border-gray-300 w-full">
+                    <h2 class="text-3xl font-bold text-black mb-6"><span class="material-icons">school</span>Education & Certifications</h2>
                     
                     <div class="space-y-6">
                         <div>
-                            <h3 class="font-semibold text-xl text-stone-800">Bachelor of Technology in Computer Science</h3>
-                            <p class="text-stone-600">WestBengal University of Technology, [Kolkata, WB/INDIA]</p>
-                            <p class="text-sm text-stone-500">CGPA: 7.7/10</p>
-                            <p class="text-sm text-stone-500">2011</p>
+                            <h3 class="font-semibold text-xl text-black">Bachelor of Technology in Computer Science</h3>
+                            <p class="text-gray-800">WestBengal University of Technology, [Kolkata, WB/INDIA]</p>
+                            <p class="text-sm text-gray-700">CGPA: 7.7/10</p>
+                            <p class="text-sm text-gray-700">2011</p>
                         </div>
-                         <div>
-                            <h3 class="font-semibold text-xl text-stone-800">Higher Secondary (10+2)</h3>
-                            <p class="text-stone-600">West Bengal Council of Higher Secondary Education, [Kolkata, WB/INDIA]</p>
-                            <p class="text-sm text-stone-500">Percentage: 64.7 % (Science)</p>
-                            <p class="text-sm text-stone-500">2006</p>
+                        <div>
+                            <h3 class="font-semibold text-xl text-black">Higher Secondary (10+2)</h3>
+                            <p class="text-gray-800">West Bengal Council of Higher Secondary Education, [Kolkata, WB/INDIA]</p>
+                            <p class="text-sm text-gray-700">Percentage: 64.7 % (Science)</p>
+                            <p class="text-sm text-gray-700">2006</p>
                         </div>
-                         <div>
-                            <h3 class="font-semibold text-xl text-stone-800">Secondary(10)</h3>
-                            <p class="text-stone-600">West Bengal Board of Secondary Education, [Kolkata, WB/INDIA]</p>
-                            <p class="text-sm text-stone-500">Percentage: 72.25 %</p>
-                            <p class="text-sm text-stone-500">2004</p>
+                        <div>
+                            <h3 class="font-semibold text-xl text-black">Secondary (10)</h3>
+                            <p class="text-gray-800">West Bengal Board of Secondary Education, [Kolkata, WB/INDIA]</p>
+                            <p class="text-sm text-gray-700">Percentage: 72.25 %</p>
+                            <p class="text-sm text-gray-700">2004</p>
                         </div>
-                        <div class="pt-6 border-t border-stone-200">
-                            <a href="https://learn.microsoft.com/en-us/users/abhirupbhattacharyya-3859/" target="_blank" class="font-semibold text-xl text-stone-800 hover:text-teal-600 block">Microsoft Certification</a>
-                            
+                        <div class="pt-6 border-t border-gray-300">
+                            <a href="https://learn.microsoft.com/en-us/users/abhirupbhattacharyya-3859/" target="_blank" class="font-semibold text-xl text-black block"><span class="material-icons text-base">verified_user</span>Microsoft Certification</a>
                         </div>
                     </div>
                 </div>
             </section>
+             <section id="projects" class="flex items-center print:block">
+                <div class="bg-white p-6 sm:p-8 md:p-12 border border-gray-300 w-full rounded-lg shadow-md">
+                    
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                        <div class="border border-gray-300 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                            <h3 class="font-semibold text-xl mb-3 text-gray-800">Scanning Solution-SAP Integration</h3>
+                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                                This Warehouse Management tool for a home appliance manufacturer is seamlessly integrated with SAP-ERP, ensuring real-time data and efficient SKU tracking. Developed with full CI/CD support, it streamlines deployment. We also manage two related marketing and service projects with complex B2C/B2B logic and advanced shipment tracking.Here we also done Dotnet to Django migration.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-200">Django-Python</span>
+                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full border border-green-200">HTML, CSS, Bootstrap</span>
+                                <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full border border-yellow-200">MS SQL Server</span>
+                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-1 rounded-full border border-red-200">Windows Server 2019</span>
+                            </div>
+                            <a href="#" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center group">
+                                <span class="material-icons text-base mr-1 group-hover:translate-x-0.5 transition-transform duration-200">link</span>
+                                View Project
+                            </a>
+                        </div>
+
+                        <div class="border border-gray-300 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                            <h3 class="font-semibold text-xl mb-3 text-gray-800">CX APP - Ecommerce</h3>
+                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                                A robust eCommerce application for a reputable brand specializing in essential items. My role includes comprehensive backend development, strategic architectural design, and efficient DevOps implementation, ensuring a stable and scalable platform.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-200">Web API</span>
+                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full border border-green-200">.NET MVC</span>
+                                <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full border border-yellow-200">MS SQL Server</span>
+                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-1 rounded-full border border-red-200">Stored Procedure</span>
+                                <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-1 rounded-full border border-purple-200">Azure (Windows Server 2019-IaaS)</span>
+                            </div>
+                            <a href="#" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center group">
+                                <span class="material-icons text-base mr-1 group-hover:translate-x-0.5 transition-transform duration-200">link</span>
+                                View Project
+                            </a>
+                        </div>
+
+                        <div class="border border-gray-300 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                            <h3 class="font-semibold text-xl mb-3 text-gray-800">BSE APP - Work Tracking Tool</h3>
+                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                                A Business Sales Executives' work and location tracking application. I developed the backend and Web API, handling all complex CRUD operations for custom client requirements. It provides seamless integration APIs for Native Android/iOS and implements push notifications and real-time location tracking.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-200">Web API</span>
+                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full border border-green-200">.NET MVC</span>
+                                <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full border border-yellow-200">MS SQL Server</span>
+                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-1 rounded-full border border-red-200">Stored Procedure</span>
+                                <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-1 rounded-full border border-purple-200">Azure (Windows Server 2019-IaaS)</span>
+                            </div>
+                            <a href="#" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center group">
+                                <span class="material-icons text-base mr-1 group-hover:translate-x-0.5 transition-transform duration-200">link</span>
+                                View Project
+                            </a>
+                        </div>
+
+                        <div class="border border-gray-300 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                            <h3 class="font-semibold text-xl mb-3 text-gray-800">Auto Attendance Module - SAP Integration</h3>
+                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                                eveloped an automated employee attendance scheduler for a renowned hotel chain. The system retrieves attendance data from a biometric device and seamlessly transfers it to the SAP HCM module at scheduled intervals, ensuring real-time data synchronization.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-1 rounded-full border border-indigo-200">Cloud Service</span>
+                                <span class="bg-teal-100 text-teal-800 text-xs font-medium px-2.5 py-1 rounded-full border border-teal-200">Framework</span>
+                            </div>
+                            <a href="#" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center group">
+                                <span class="material-icons text-base mr-1 group-hover:translate-x-0.5 transition-transform duration-200">link</span>
+                                View Project</a>
+                        </div>
+                       
+                        <div class="border border-gray-300 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                            <h3 class="font-semibold text-xl mb-3 text-gray-800">Vendor Invoice Automation - SAP Integration</h3>
+                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                               
+                            </p>
+                             <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-200">Python-Django</span>
+                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full border border-green-200">Mongo DB</span>
+                                <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full border border-yellow-200">OCR</span>      
+                            <a href="#" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center group">
+                                <span class="material-icons text-base mr-1 group-hover:translate-x-0.5 transition-transform duration-200">link</span>
+                                View Project</a>
+                        </div>
+                        <div class="border border-gray-300 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                            <h3 class="font-semibold text-xl mb-3 text-gray-800">KPI Dashboard in Power BI - SAP Integration</h3>
+                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                               
+                            </p>
+                             <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-200">Python</span>
+                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full border border-green-200">Aws Lambda</span>
+                                <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full border border-yellow-200">Reddit -Maria DB</span>      
+                                <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full border border-yellow-200">S3 Bucket</span> 
+                            <a href="#" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center group">
+                                <span class="material-icons text-base mr-1 group-hover:translate-x-0.5 transition-transform duration-200">link</span>
+                                View Project</a>
+                        </div>
+                        <div class="border border-gray-300 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                            <h3 class="font-semibold text-xl mb-3 text-gray-800">Lab Management Application</h3>
+                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                                
+                            </p>
+                             <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-200">Windows Desktop Application</span>
+                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full border border-green-200">.NET 4/4.5/4.7 Framework</span>
+                                <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full border border-yellow-200">MS Access / MS SQL </span>      
+                            <a href="#" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center group">
+                                <span class="material-icons text-base mr-1 group-hover:translate-x-0.5 transition-transform duration-200">link</span>
+                                View Project</a>
+                        </div>
+                        <div class="border border-gray-300 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                            <h3 class="font-semibold text-xl mb-3 text-gray-800">Retailer Management Application - ERP</h3>
+                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                               
+                            </p>
+                             <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-200">Windows Desktop Application</span>
+                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full border border-green-200">.NET 4/4.5/4.7 Framework</span>
+                                <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full border border-yellow-200">MS Access / MSS SQL</span>      
+                            <a href="#" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center group">
+                                <span class="material-icons text-base mr-1 group-hover:translate-x-0.5 transition-transform duration-200">link</span>
+                                View Project</a>
+                        </div>
+                    </div>
+            </div>
+            </section>
 
             <footer id="contact" class="text-center py-12">
-                <h2 class="text-3xl font-bold text-teal-700 mb-4">Get In Touch</h2>
-                <p class="text-stone-600 mb-6">abhirup.bhattacharyya1988@gmail.com | +91 789 0616 811</p>
+                <h2 class="text-3xl font-bold text-black mb-4"><span class="material-icons">contact_mail</span>Get In Touch</h2>
+                <p class="text-gray-800 mb-6"><span class="material-icons text-base">email</span>abhirup.bhattacharyya1988@gmail.com | <span class="material-icons text-base">phone</span>+91 789 0616 811</p>
                 <div class="flex justify-center space-x-4">
-                    <a href="https://www.linkedin.com/in/abhirup-bhattacharyya-240939267/" class="text-stone-500 hover:text-teal-600">Linkdn</a>
-                    <a href="https://github.com/devabhifullstack" class="text-stone-500 hover:text-teal-600">GitHub</a>
+                    <a href="https://www.linkedin.com/in/abhirup-bhattacharyya-240939267/" class="text-black hover:text-gray-700"><span class="material-icons">link</span>LinkedIn</a>
+                    <a href="https://github.com/devabhifullstack" class="text-black hover:text-gray-700"><span class="material-icons">link</span>GitHub</a>
                 </div>
-                 <p class="text-sm text-stone-400 mt-8">© 2025 Abhirup Bhattacharyya. All Rights Reserved.</p>
+                <p class="text-sm text-gray-600 mt-8">© 2025 Abhirup Bhattacharyya. All Rights Reserved.</p>
             </footer>
 
         </main>
@@ -252,14 +524,14 @@
                 labels: ['C# & .NET', 'Python & Django', 'React JS', 'JS/HTML/CSS', 'SQL Databases', 'NoSQL Databases', 'Cloud (AWS/Azure)'],
                 datasets: [{
                     label: 'Self-Assessed Proficiency',
-                    data: [90, 85, 88, 95, 85, 75, 80],
-                    backgroundColor: 'rgba(13, 148, 136, 0.6)',
-                    borderColor: 'rgba(15, 118, 110, 1)',
+                    data: [75, 70, 55, 75, 65, 60, 75],
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)', /* Black bars */
+                    borderColor: 'rgba(0, 0, 0, 1)',
                     borderWidth: 1,
                     borderRadius: 4,
                 }]
             };
-
+            
             const config = {
                 type: 'bar',
                 data: skillsData,
@@ -273,12 +545,12 @@
                         },
                         tooltip: {
                             backgroundColor: '#ffffff',
-                            titleColor: '#3f3f46',
-                            bodyColor: '#3f3f46',
-                            borderColor: '#e5e7eb',
+                            titleColor: '#000000',
+                            bodyColor: '#000000',
+                            borderColor: '#cccccc',
                             borderWidth: 1,
                             padding: 10,
-                            cornerRadius: 6,
+                            cornerRadius: 0, /* Square corners for CV aesthetic */
                         },
                     },
                     scales: {
@@ -286,10 +558,10 @@
                             beginAtZero: true,
                             max: 100,
                             grid: {
-                                color: '#f3f4f6',
+                                color: '#e0e0e0', /* Lighter grid lines */
                             },
                             ticks: {
-                                color: '#57534e',
+                                color: '#000000', /* Black ticks */
                             }
                         },
                         y: {
@@ -297,7 +569,7 @@
                                 display: false
                             },
                             ticks: {
-                                color: '#57534e',
+                                color: '#000000', /* Black ticks */
                                 font: {
                                     size: 14
                                 }
@@ -310,13 +582,14 @@
             const skillsChartCtx = document.getElementById('skillsChart').getContext('2d');
             new Chart(skillsChartCtx, config);
 
-            const timelineTitles = document.querySelectorAll('.timeline-title');
-            timelineTitles.forEach(title => {
-                title.addEventListener('click', () => {
-                    const content = title.nextElementSibling.nextElementSibling;
-                    content.classList.toggle('expanded');
-                });
-            });
+            // Interactive JavaScript for screen viewing (commented out for print optimization)
+            // const timelineTitles = document.querySelectorAll('.timeline-title');
+            // timelineTitles.forEach(title => {
+            //     title.addEventListener('click', () => {
+            //         const content = title.nextElementSibling.nextElementSibling;
+            //         content.classList.toggle('expanded');
+            //     });
+            // });
 
             const menuToggle = document.getElementById('menu-toggle');
             const sidebar = document.getElementById('sidebar');
